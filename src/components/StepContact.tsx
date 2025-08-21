@@ -1,19 +1,60 @@
 import React from 'react';
 import { User, CheckCircle } from 'lucide-react';
 import { ContactInfo } from '../types/solar';
+import { sendLeadToAirtable, LeadData } from '../services/airtableService';
 
 interface StepContactProps {
   data: ContactInfo;
   onChange: (data: ContactInfo) => void;
   onComplete: () => void;
   onPrev: () => void;
+  leadData?: {
+    addressInfo: any;
+    roofInfo: any;
+    consumptionInfo: any;
+    simulationResult: any;
+  };
 }
 
-export const StepContact: React.FC<StepContactProps> = ({ data, onChange, onComplete, onPrev }) => {
-  const handleSubmit = (e: React.FormEvent) => {
+export const StepContact: React.FC<StepContactProps> = ({ 
+  data, 
+  onChange, 
+  onComplete, 
+  onPrev, 
+  leadData 
+}) => {
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [submitError, setSubmitError] = React.useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     if (data.firstName && data.lastName && data.email && data.phone) {
-      onComplete();
+      setIsSubmitting(true);
+      setSubmitError(null);
+      
+      try {
+        // Envoyer les données vers Airtable si toutes les données sont disponibles
+        if (leadData) {
+          const completeLeadData: LeadData = {
+            addressInfo: leadData.addressInfo,
+            roofInfo: leadData.roofInfo,
+            consumptionInfo: leadData.consumptionInfo,
+            contactInfo: data,
+            simulationResult: leadData.simulationResult
+          };
+          
+          await sendLeadToAirtable(completeLeadData);
+          console.log('Données envoyées vers Airtable avec succès');
+        }
+        
+        onComplete();
+      } catch (error) {
+        console.error('Erreur lors de l\'envoi:', error);
+        setSubmitError('Une erreur est survenue lors de l\'envoi. Veuillez réessayer.');
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   };
 
@@ -133,6 +174,12 @@ export const StepContact: React.FC<StepContactProps> = ({ data, onChange, onComp
           </div>
         </div>
 
+        {submitError && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+            <p className="text-red-800 text-sm">{submitError}</p>
+          </div>
+        )}
+
         <div className="flex space-x-4">
           <button
             type="button"
@@ -143,16 +190,26 @@ export const StepContact: React.FC<StepContactProps> = ({ data, onChange, onComp
           </button>
           <button
             type="submit"
-            className="flex-1 bg-gradient-to-r from-purple-600 to-purple-700 text-white py-3 px-6 rounded-lg hover:from-purple-700 hover:to-purple-800 transition-all duration-200 font-medium flex items-center justify-center"
+            disabled={isSubmitting}
+            className="flex-1 bg-gradient-to-r from-purple-600 to-purple-700 text-white py-3 px-6 rounded-lg hover:from-purple-700 hover:to-purple-800 transition-all duration-200 font-medium flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <CheckCircle className="w-5 h-5 mr-2" />
-            Envoyer ma demande
+            {isSubmitting ? (
+              <>
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                Envoi en cours...
+              </>
+            ) : (
+              <>
+                <CheckCircle className="w-5 h-5 mr-2" />
+                Envoyer ma demande
+              </>
+            )}
           </button>
         </div>
       </form>
 
       <div className="mt-6 text-center text-sm text-gray-500">
-        <p>En soumettant ce formulaire, vous acceptez d'être contacté par nos experts solaires.</p>
+        <p>En soumettant ce formulaire, vous acceptez d'être contacté par nos experts solaires et que vos données soient traitées.</p>
       </div>
     </div>
   );

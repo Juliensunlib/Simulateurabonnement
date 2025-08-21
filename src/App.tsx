@@ -117,6 +117,12 @@ function App() {
             onChange={setContactInfo}
             onComplete={completeSimulation}
             onPrev={prevStep}
+            leadData={{
+              addressInfo,
+              roofInfo,
+              consumptionInfo,
+              simulationResult
+            }}
           />
         );
       case 6:
