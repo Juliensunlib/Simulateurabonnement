@@ -42,6 +42,17 @@ export const sendLeadToAirtable = async (leadData: LeadData): Promise<string> =>
       return 'no-airtable-config';
     }
 
+    // Vérifier que les clés API sont valides
+    if (!AIRTABLE_API_KEY || AIRTABLE_API_KEY === 'your_airtable_api_key_here') {
+      console.warn('Clé API Airtable non configurée ou invalide.');
+      return 'invalid-api-key';
+    }
+
+    if (!AIRTABLE_BASE_ID || AIRTABLE_BASE_ID === 'your_airtable_base_id_here') {
+      console.warn('Base ID Airtable non configurée ou invalide.');
+      return 'invalid-base-id';
+    }
+
     const record = await airtableBase(AIRTABLE_TABLE_NAME).create({
       // Informations contact
       'Prénom': leadData.contactInfo.firstName,
@@ -71,7 +82,14 @@ export const sendLeadToAirtable = async (leadData: LeadData): Promise<string> =>
     return record.id;
   } catch (error) {
     console.error('Erreur lors de l\'envoi vers Airtable:', error);
-    throw new Error('Impossible d\'envoyer les données vers Airtable');
+    
+    // Gestion spécifique des erreurs d'autorisation
+    if (error.message?.includes('NOT_AUTHORIZED') || error.message?.includes('You are not authorized')) {
+      throw new Error('Clé API Airtable invalide ou permissions insuffisantes. Vérifiez votre configuration.');
+    }
+    
+    // Autres erreurs
+    throw new Error(`Erreur Airtable: ${error.message || 'Impossible d\'envoyer les données'}`);
   }
 };
 

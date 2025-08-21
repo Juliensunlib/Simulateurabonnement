@@ -26,9 +26,16 @@ export const searchAddresses = async (query: string): Promise<any[]> => {
 // Service pour obtenir les données d'irradiation solaire (API PVGIS)
 export const getSolarIrradiation = async (lat: number, lon: number): Promise<number> => {
   try {
-    const response = await fetch(
-      `https://re.jrc.ec.europa.eu/api/v5_2/PVcalc?lat=${lat}&lon=${lon}&raddatabase=PVGIS-SARAH2&browser=1&outputformat=json&usehorizon=1&userhorizon=&startyear=2016&endyear=2020&peakpower=1&loss=14&trackingtype=0&optimalinclination=1&optimalangles=1`
-    );
+    const apiUrl = import.meta.env.DEV 
+      ? `/api/pvgis/PVcalc?lat=${lat}&lon=${lon}&raddatabase=PVGIS-SARAH2&browser=1&outputformat=json&usehorizon=1&userhorizon=&startyear=2016&endyear=2020&peakpower=1&loss=14&trackingtype=0&optimalinclination=1&optimalangles=1`
+      : `https://re.jrc.ec.europa.eu/api/v5_2/PVcalc?lat=${lat}&lon=${lon}&raddatabase=PVGIS-SARAH2&browser=1&outputformat=json&usehorizon=1&userhorizon=&startyear=2016&endyear=2020&peakpower=1&loss=14&trackingtype=0&optimalinclination=1&optimalangles=1`;
+    
+    const response = await fetch(apiUrl);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
     const data = await response.json();
     
     // Retourne la production spécifique en kWh/kWc/an
@@ -42,9 +49,16 @@ export const getSolarIrradiation = async (lat: number, lon: number): Promise<num
 // Nouvelle fonction pour obtenir les données PVGIS complètes
 export const getPVGISData = async (lat: number, lon: number, peakPower: number) => {
   try {
-    const response = await fetch(
-      `https://re.jrc.ec.europa.eu/api/v5_2/PVcalc?lat=${lat}&lon=${lon}&raddatabase=PVGIS-SARAH2&browser=1&outputformat=json&usehorizon=1&userhorizon=&startyear=2016&endyear=2020&peakpower=${peakPower}&loss=14&trackingtype=0&optimalinclination=1&optimalangles=1`
-    );
+    const apiUrl = import.meta.env.DEV 
+      ? `/api/pvgis/PVcalc?lat=${lat}&lon=${lon}&raddatabase=PVGIS-SARAH2&browser=1&outputformat=json&usehorizon=1&userhorizon=&startyear=2016&endyear=2020&peakpower=${peakPower}&loss=14&trackingtype=0&optimalinclination=1&optimalangles=1`
+      : `https://re.jrc.ec.europa.eu/api/v5_2/PVcalc?lat=${lat}&lon=${lon}&raddatabase=PVGIS-SARAH2&browser=1&outputformat=json&usehorizon=1&userhorizon=&startyear=2016&endyear=2020&peakpower=${peakPower}&loss=14&trackingtype=0&optimalinclination=1&optimalangles=1`;
+    
+    const response = await fetch(apiUrl);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
     const data = await response.json();
     
     if (data.outputs && data.outputs.totals && data.outputs.totals.fixed) {
