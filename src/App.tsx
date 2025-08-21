@@ -139,9 +139,11 @@ function App() {
         <div className="max-w-6xl mx-auto px-4 py-4">
           <div className="flex items-center justify-center space-x-4">
             <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-medium">
-                <Sun className="w-6 h-6 text-white" />
-              </div>
+              <img 
+                src="/03 - Copie.png" 
+                alt="Logo SunLib" 
+                className="w-12 h-12 rounded-xl shadow-medium object-contain"
+              />
               <div className="text-left">
                 <h1 className="text-3xl font-bold font-display bg-gradient-to-r from-primary-600 to-primary-700 bg-clip-text text-transparent">
                   Simulateur d'abonnement solaire SunLib
