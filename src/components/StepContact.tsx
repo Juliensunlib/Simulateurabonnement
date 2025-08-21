@@ -44,14 +44,24 @@ export const StepContact: React.FC<StepContactProps> = ({
             simulationResult: leadData.simulationResult
           };
           
-          await sendLeadToAirtable(completeLeadData);
-          console.log('Données envoyées vers Airtable avec succès');
+          const result = await sendLeadToAirtable(completeLeadData);
+          if (result === 'no-airtable-config') {
+            console.log('Simulation terminée (Airtable non configuré)');
+          } else {
+            console.log('Données envoyées vers Airtable avec succès');
+          }
         }
         
         onComplete();
       } catch (error) {
         console.error('Erreur lors de l\'envoi:', error);
-        setSubmitError('Une erreur est survenue lors de l\'envoi. Veuillez réessayer.');
+        // Ne pas bloquer l'utilisateur si Airtable n'est pas configuré
+        if (error.message?.includes('Configuration Airtable')) {
+          console.warn('Airtable non configuré, mais simulation terminée');
+          onComplete();
+        } else {
+          setSubmitError('Une erreur est survenue lors de l\'envoi. Veuillez réessayer.');
+        }
       } finally {
         setIsSubmitting(false);
       }
