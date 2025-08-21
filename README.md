@@ -31,25 +31,12 @@ VITE_AIRTABLE_BASE_ID=your_airtable_base_id_here
 - **Adresse complète** (Long text)
 - **Ville** (Single line text)
 
-#### Informations Toiture
-- **Surface toiture** (Number)
-- **Orientation** (Single select: Sud, Sud-Est, Sud-Ouest, Est, Ouest, Nord)
-- **Inclinaison** (Number)
-- **Type toiture** (Single select: Tuiles, Ardoises, Bac acier, Membrane EPDM, Autre)
-- **Obstacles** (Checkbox)
-
-#### Informations Consommation
+#### Consommation
 - **Consommation annuelle** (Number)
 - **Facture mensuelle** (Number)
-- **Type chauffage** (Single select: Électrique, Gaz, Fioul, Autre)
 
-#### Résultats Simulation
+#### Simulation
 - **Puissance recommandée** (Number)
-- **Production annuelle** (Number)
-- **Autoconsommation** (Number)
-- **Économies annuelles** (Number)
-- **Abonnement mensuel** (Number)
-- **Réduction CO2** (Number)
 
 #### Métadonnées
 - **Date création** (Date)

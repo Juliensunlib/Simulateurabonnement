@@ -39,25 +39,12 @@ export const sendLeadToAirtable = async (leadData: LeadData): Promise<string> =>
       'Adresse complète': leadData.addressInfo.fullAddress || leadData.addressInfo.address,
       'Ville': leadData.addressInfo.city,
       
-      // Informations toiture
-      'Surface toiture': leadData.roofInfo.surface,
-      'Orientation': capitalizeFirst(leadData.roofInfo.orientation),
-      'Inclinaison': leadData.roofInfo.inclination,
-      'Type toiture': getFormattedRoofType(leadData.roofInfo.roofType),
-      'Obstacles': leadData.roofInfo.obstacles,
-      
       // Informations consommation
       'Consommation annuelle': leadData.consumptionInfo.annualConsumption,
       'Facture mensuelle': leadData.consumptionInfo.monthlyBill,
-      'Type chauffage': capitalizeFirst(leadData.consumptionInfo.heatingType),
       
       // Résultats simulation
       'Puissance recommandée': leadData.simulationResult.maxPower,
-      'Production annuelle': leadData.simulationResult.annualProduction,
-      'Autoconsommation': leadData.simulationResult.selfConsumption,
-      'Économies annuelles': leadData.simulationResult.annualSavings,
-      'Abonnement mensuel': leadData.simulationResult.monthlySubscription,
-      'Réduction CO2': leadData.simulationResult.co2Reduction,
       
       // Métadonnées
       'Date création': new Date().toISOString().split('T')[0],
@@ -70,27 +57,6 @@ export const sendLeadToAirtable = async (leadData: LeadData): Promise<string> =>
     console.error('Erreur lors de l\'envoi vers Airtable:', error);
     throw new Error('Impossible d\'envoyer les données vers Airtable');
   }
-};
-
-/**
- * Met en forme le type de toiture pour Airtable
- */
-const getFormattedRoofType = (roofType: string): string => {
-  const mapping: { [key: string]: string } = {
-    'tuiles': 'Tuiles',
-    'ardoises': 'Ardoises',
-    'bac-acier': 'Bac acier',
-    'membrane': 'Membrane EPDM',
-    'autre': 'Autre'
-  };
-  return mapping[roofType] || 'Autre';
-};
-
-/**
- * Capitalise la première lettre
- */
-const capitalizeFirst = (str: string): string => {
-  return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
 /**
