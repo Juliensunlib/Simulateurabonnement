@@ -38,18 +38,18 @@ export const sendLeadToAirtable = async (leadData: LeadData): Promise<string> =>
     const airtableBase = initializeAirtable();
     
     if (!airtableBase) {
-      console.warn('Airtable non configuré. Les données ne seront pas sauvegardées.');
+      console.log('Airtable non configuré. Simulation terminée sans sauvegarde.');
       return 'no-airtable-config';
     }
 
     // Vérifier que les clés API sont valides
     if (!AIRTABLE_API_KEY || AIRTABLE_API_KEY === 'your_airtable_api_key_here') {
-      console.warn('Clé API Airtable non configurée ou invalide.');
+      console.log('Clé API Airtable non configurée. Simulation terminée sans sauvegarde.');
       return 'invalid-api-key';
     }
 
     if (!AIRTABLE_BASE_ID || AIRTABLE_BASE_ID === 'your_airtable_base_id_here') {
-      console.warn('Base ID Airtable non configurée ou invalide.');
+      console.log('Base ID Airtable non configurée. Simulation terminée sans sauvegarde.');
       return 'invalid-base-id';
     }
 
@@ -83,13 +83,17 @@ export const sendLeadToAirtable = async (leadData: LeadData): Promise<string> =>
   } catch (error) {
     console.error('Erreur lors de l\'envoi vers Airtable:', error);
     
-    // Gestion spécifique des erreurs d'autorisation
-    if (error.message?.includes('NOT_AUTHORIZED') || error.message?.includes('You are not authorized')) {
-      throw new Error('Clé API Airtable invalide ou permissions insuffisantes. Vérifiez votre configuration.');
+    // Gestion spécifique des erreurs d'autorisation - ne pas bloquer l'utilisateur
+    if (error.message?.includes('NOT_AUTHORIZED') || 
+        error.message?.includes('You are not authorized') ||
+        error.message?.includes('AUTHENTICATION_REQUIRED')) {
+      console.log('Erreur d\'autorisation Airtable. Simulation terminée sans sauvegarde.');
+      return 'authorization-error';
     }
     
-    // Autres erreurs
-    throw new Error(`Erreur Airtable: ${error.message || 'Impossible d\'envoyer les données'}`);
+    // Autres erreurs - ne pas bloquer non plus
+    console.log('Erreur Airtable générique. Simulation terminée sans sauvegarde.');
+    return 'generic-error';
   }
 };
 
