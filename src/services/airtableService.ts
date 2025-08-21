@@ -22,6 +22,32 @@ const initializeAirtable = () => {
   return base;
 };
 
+/**
+ * Formate un numéro de téléphone français pour Airtable
+ */
+const formatPhoneForAirtable = (phone: string): string => {
+  // Nettoyer le numéro (supprimer espaces, points, tirets)
+  const cleanPhone = phone.replace(/[\s\.\-]/g, '');
+  
+  // Si le numéro commence déjà par +33, le retourner tel quel
+  if (cleanPhone.startsWith('+33')) {
+    return cleanPhone;
+  }
+  
+  // Si le numéro commence par 0, le remplacer par +33
+  if (cleanPhone.startsWith('0')) {
+    return '+33' + cleanPhone.substring(1);
+  }
+  
+  // Si le numéro commence par 33, ajouter le +
+  if (cleanPhone.startsWith('33')) {
+    return '+' + cleanPhone;
+  }
+  
+  // Sinon, considérer que c'est un numéro français sans le 0 initial
+  return '+33' + cleanPhone;
+};
+
 export interface LeadData {
   addressInfo: AddressInfo;
   roofInfo: RoofInfo;
@@ -58,7 +84,7 @@ export const sendLeadToAirtable = async (leadData: LeadData): Promise<string> =>
       'Prénom': leadData.contactInfo.firstName,
       'Nom': leadData.contactInfo.lastName,
       'Email': leadData.contactInfo.email,
-      'Téléphone': leadData.contactInfo.phone,
+      'Téléphone': formatPhoneForAirtable(leadData.contactInfo.phone),
       'Code postal': leadData.contactInfo.postalCode || leadData.addressInfo.postalCode,
       'Préférence contact': leadData.contactInfo.contactPreference === 'email' ? 'Email' : 'Téléphone',
       
