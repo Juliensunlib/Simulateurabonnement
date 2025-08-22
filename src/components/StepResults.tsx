@@ -89,7 +89,7 @@ export const StepResults: React.FC<StepResultsProps> = ({ results, onNext, onPre
         </div>
 
         <div className="bg-white p-8 rounded-2xl shadow-strong border border-gray-100">
-          <h3 className="text-2xl font-bold font-display text-gray-900 mb-6">📊 Données PVGIS officielles</h3>
+          <h3 className="text-2xl font-bold font-display text-gray-900 mb-6">📊 Données PVGIS officielles*</h3>
           <div className="space-y-5">
             <div className="flex justify-between">
               <span className="text-gray-700 font-medium">Nombre de panneaux (500W)</span>
@@ -154,6 +154,12 @@ export const StepResults: React.FC<StepResultsProps> = ({ results, onNext, onPre
         >
           Modifier les paramètres
         </button>
+      </div>
+
+      <div className="mt-8 text-center">
+        <p className="text-xs text-gray-500">
+          * PVGIS = PHOTOVOLTAIC GEOGRAPHICAL INFORMATION SYSTEM
+        </p>
       </div>
     </div>
   );
