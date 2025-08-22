@@ -177,10 +177,15 @@ export const calculateSolarPotential = async (
   const selfConsumedEnergy = (annualProduction * selfConsumption) / 100;
   const soldEnergy = annualProduction - selfConsumedEnergy;
   
-  const annualSavings = Math.round(
-    (selfConsumedEnergy * SUBSCRIPTION_CONFIG.electricityPrice) + 
-    (soldEnergy * SUBSCRIPTION_CONFIG.sellingPrice)
-  );
+  // Calcul des économies complètes :
+  // 1. Économies sur la facture (électricité non achetée grâce à l'autoconsommation)
+  const billSavings = selfConsumedEnergy * SUBSCRIPTION_CONFIG.electricityPrice;
+  
+  // 2. Revenus de la revente du surplus
+  const saleRevenue = soldEnergy * SUBSCRIPTION_CONFIG.sellingPrice;
+  
+  // 3. Total des économies annuelles
+  const annualSavings = Math.round(billSavings + saleRevenue);
 
   // Calcul de l'abonnement mensuel SunLib (TTC)
   const monthlySubscription = Math.round(getSunLibSubscription(maxPower));
