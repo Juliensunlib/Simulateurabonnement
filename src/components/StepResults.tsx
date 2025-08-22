@@ -60,16 +60,8 @@ export const StepResults: React.FC<StepResultsProps> = ({ results, onNext, onPre
                   <span className="font-medium">{Math.round((results.annualProduction * results.selfConsumption) / 100)} kWh</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-blue-700">Économies facture (0,19€/kWh) :</span>
-                  <span className="font-medium text-green-600">+{Math.round(((results.annualProduction * results.selfConsumption) / 100) * 0.19)}€</span>
-                </div>
-                <div className="flex justify-between">
                   <span className="text-blue-700">Surplus vendu :</span>
                   <span className="font-medium">{Math.round(results.annualProduction - ((results.annualProduction * results.selfConsumption) / 100))} kWh</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-blue-700">Revenus revente (0,40€/kWh) :</span>
-                  <span className="font-medium text-green-600">+{Math.round((results.annualProduction - ((results.annualProduction * results.selfConsumption) / 100)) * 0.4)}€</span>
                 </div>
                 <div className="flex justify-between pt-2 border-t border-blue-200">
                   <span className="font-semibold text-blue-900">Total économies annuelles :</span>
