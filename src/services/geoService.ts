@@ -8,6 +8,11 @@ export const searchAddresses = async (query: string): Promise<any[]> => {
     );
     const data = await response.json();
     
+    // Vérifier que data et data.features existent et que features est un tableau
+    if (!data || !data.features || !Array.isArray(data.features)) {
+      return [];
+    }
+    
     return data.features.map((feature: any) => ({
       label: feature.properties.label,
       value: feature.properties.label,
