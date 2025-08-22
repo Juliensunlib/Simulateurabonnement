@@ -52,6 +52,31 @@ export const StepResults: React.FC<StepResultsProps> = ({ results, onNext, onPre
         <div className="bg-white p-8 rounded-2xl shadow-strong border border-gray-100">
           <h3 className="text-2xl font-bold font-display text-gray-900 mb-6">💰 Vos économies mensuelles estimées</h3>
           <div className="space-y-5">
+            <div className="bg-blue-50 p-4 rounded-lg mb-4">
+              <h4 className="font-semibold text-blue-900 mb-3">📊 Détail de vos économies annuelles :</h4>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-blue-700">Électricité autoconsommée :</span>
+                  <span className="font-medium">{Math.round((results.annualProduction * results.selfConsumption) / 100)} kWh</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-blue-700">Économies facture (0,19€/kWh) :</span>
+                  <span className="font-medium text-green-600">+{Math.round(((results.annualProduction * results.selfConsumption) / 100) * 0.19)}€</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-blue-700">Surplus vendu :</span>
+                  <span className="font-medium">{Math.round(results.annualProduction - ((results.annualProduction * results.selfConsumption) / 100))} kWh</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-blue-700">Revenus revente (0,40€/kWh) :</span>
+                  <span className="font-medium text-green-600">+{Math.round((results.annualProduction - ((results.annualProduction * results.selfConsumption) / 100)) * 0.4)}€</span>
+                </div>
+                <div className="flex justify-between pt-2 border-t border-blue-200">
+                  <span className="font-semibold text-blue-900">Total économies annuelles :</span>
+                  <span className="font-bold text-green-600">+{results.annualSavings}€</span>
+                </div>
+              </div>
+            </div>
             <div className="flex justify-between">
               <span className="text-gray-700 font-medium">Autoconsommation</span>
               <span className="font-bold text-lg">{results.selfConsumption}%</span>
