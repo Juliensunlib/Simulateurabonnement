@@ -28,7 +28,7 @@ export const StepComplete: React.FC<StepCompleteProps> = ({ onRestart }) => {
 
         <div className="bg-white p-6 rounded-lg shadow-md">
           <Calendar className="w-8 h-8 text-orange-600 mx-auto mb-3" />
-          <h3 className="font-semibold text-gray-900 mb-2">Abonnement flexible</h3>
+          <h3 className="font-semibold text-gray-900 mb-2">Aucun investissement initial</h3>
         </div>
 
         <div className="bg-white p-6 rounded-lg shadow-md">
