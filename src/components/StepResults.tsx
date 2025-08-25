@@ -140,10 +140,6 @@ export const StepResults: React.FC<StepResultsProps> = ({ results, onNext, onPre
             <Mail className="w-6 h-6 mr-3" />
             Souscrire à l'abonnement solaire
           </button>
-          <button className="bg-primary-800 text-white px-10 py-4 rounded-xl font-bold font-display text-lg hover:bg-primary-900 transition-all duration-300 flex items-center justify-center shadow-medium">
-            <Phone className="w-6 h-6 mr-3" />
-            Être rappelé(e)
-          </button>
         </div>
       </div>
 
