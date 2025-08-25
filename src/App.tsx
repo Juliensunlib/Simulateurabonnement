@@ -54,14 +54,20 @@ function App() {
         });
     }
     setCurrentStep(prev => Math.min(prev + 1, totalSteps));
+    // Faire défiler vers le haut de la page
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const prevStep = () => {
     setCurrentStep(prev => Math.max(prev - 1, 1));
+    // Faire défiler vers le haut de la page
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const completeSimulation = () => {
     setCurrentStep(6);
+    // Faire défiler vers le haut de la page
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const restartSimulation = () => {
