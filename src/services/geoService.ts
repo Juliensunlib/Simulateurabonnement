@@ -100,7 +100,12 @@ export const getPVGISData = async (lat: number, lon: number, peakPower: number) 
 };
 
 // Calcul de l'autoconsommation basé sur les profils de consommation
-export const calculateSelfConsumption = (annualProduction: number, annualConsumption: number, heatingType: string, targetMinimum: number = 60): number => {
+export const calculateSelfConsumption = (
+  annualProduction: number, 
+  annualConsumption: number, 
+  heatingType: string, 
+  targetMinimum: number = 60
+): number => {
   // Facteurs d'autoconsommation selon le type de chauffage et le ratio production/consommation
   const productionRatio = annualProduction / annualConsumption;
   
@@ -109,25 +114,25 @@ export const calculateSelfConsumption = (annualProduction: number, annualConsump
   // Ajustement selon le type de chauffage
   switch (heatingType) {
     case 'electrique':
-      baseAutoconsumption = Math.max(targetMinimum, 65); // Plus de consommation diurne
+      baseAutoconsumption = Math.max(targetMinimum, 70); // Plus de consommation diurne avec chauffage électrique
       break;
     case 'gaz':
     case 'fioul':
-      baseAutoconsumption = Math.max(targetMinimum, 60); // Moins de consommation électrique mais minimum 60%
+      baseAutoconsumption = Math.max(targetMinimum, 65); // Consommation électrique réduite mais appareils électroménagers
       break;
     default:
-      baseAutoconsumption = targetMinimum;
+      baseAutoconsumption = Math.max(targetMinimum, 65);
   }
   
   // Ajustement selon le ratio production/consommation
   if (productionRatio <= 0.5) {
-    return Math.max(targetMinimum, Math.min(85, baseAutoconsumption + 20)); // Petite installation = plus d'autoconsommation
+    return Math.max(targetMinimum, Math.min(90, baseAutoconsumption + 20)); // Petite installation = plus d'autoconsommation
   } else if (productionRatio <= 1.0) {
-    return Math.max(targetMinimum, Math.min(75, baseAutoconsumption + 10));
+    return Math.max(targetMinimum, Math.min(80, baseAutoconsumption + 10));
   } else if (productionRatio <= 1.5) {
-    return Math.max(targetMinimum, Math.min(70, baseAutoconsumption + 5));
+    return Math.max(targetMinimum, Math.min(75, baseAutoconsumption + 5));
   } else {
-    return Math.max(targetMinimum, baseAutoconsumption); // Toujours au minimum le seuil configuré
+    return Math.max(targetMinimum, Math.min(70, baseAutoconsumption)); // Grande installation = moins d'autoconsommation
   }
 };
 // Simulation d'analyse d'exposition solaire du toit

@@ -12,7 +12,7 @@ const MIN_POWER = 2.5; // kWc minimum
 const MAX_POWER = 12;   // kWc maximum
 
 // Taux d'autoconsommation maximum fixé à 60%
-const MAX_SELF_CONSUMPTION = 60;
+const TARGET_MIN_SELF_CONSUMPTION = 60; // Minimum garanti, mais peut être plus élevé
 
 // Grille tarifaire SunLib (EUR TTC mensuel) pour 25 ans selon la puissance
 // Puissances: 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, etc.
@@ -88,6 +88,7 @@ const getSunLibSubscription = (power: number): number => {
  */
 const calculateOptimalPowerForProfit = (
   annualConsumption: number,
+  heatingType: string,
   specificProduction: number,
   maxPowerFromSurface: number
 ): number => {
@@ -105,8 +106,13 @@ const calculateOptimalPowerForProfit = (
   for (let power = MIN_POWER; power <= maxTestPower; power += 0.5) {
     const annualProduction = power * specificProduction;
     
-    // Calcul autoconsommation fixé à MAX_SELF_CONSUMPTION (60%)
-    const selfConsumption = MAX_SELF_CONSUMPTION;
+    // Calcul autoconsommation dynamique selon la production et la consommation
+    const selfConsumption = calculateSelfConsumption(
+      annualProduction, 
+      annualConsumption, 
+      heatingType, 
+      TARGET_MIN_SELF_CONSUMPTION
+    );
     
     const selfConsumedEnergy = (annualProduction * selfConsumption) / 100;
     const soldEnergy = annualProduction - selfConsumedEnergy;
@@ -162,6 +168,7 @@ export const calculateSolarPotential = async (
   // Calcul de la puissance optimale qui garantit des économies (limitée entre MIN_POWER et MAX_POWER)
   const maxPower = calculateOptimalPowerForProfit(
     consumptionInfo.annualConsumption,
+    consumptionInfo.heatingType,
     specificProduction,
     maxPowerFromSurface
   );
@@ -170,8 +177,13 @@ export const calculateSolarPotential = async (
   const pvgisData = await getPVGISData(addressInfo.latitude, addressInfo.longitude, maxPower);
   const annualProduction = pvgisData.annualProduction;
   
-  // Calcul de l'autoconsommation fixé à MAX_SELF_CONSUMPTION (60%)
-  const selfConsumption = MAX_SELF_CONSUMPTION;
+  // Calcul de l'autoconsommation dynamique
+  const selfConsumption = calculateSelfConsumption(
+    annualProduction,
+    consumptionInfo.annualConsumption,
+    consumptionInfo.heatingType,
+    TARGET_MIN_SELF_CONSUMPTION
+  );
 
   // Calcul des économies
   const selfConsumedEnergy = (annualProduction * selfConsumption) / 100;
