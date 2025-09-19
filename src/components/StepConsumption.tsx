@@ -35,7 +35,7 @@ export const StepConsumption: React.FC<StepConsumptionProps> = ({ data, onChange
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Consommation annuelle (kWh) *
+            Consommation annuelle (kWh)
           </label>
           <input
             type="number"
@@ -44,10 +44,9 @@ export const StepConsumption: React.FC<StepConsumptionProps> = ({ data, onChange
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
             placeholder="3500"
             min="1"
-            required
           />
           <p className="text-sm text-gray-500 mt-1">
-            Vous pouvez trouver cette information sur votre facture d'électricité
+            Vous pouvez trouver cette information sur votre facture d'électricité (optionnel)
           </p>
         </div>
 

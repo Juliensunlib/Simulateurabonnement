@@ -3,7 +3,7 @@ import { getPVGISData, calculateSelfConsumption } from '../services/geoService';
 
 // Configuration des tarifs et paramètres
 const SUBSCRIPTION_CONFIG = {
-  electricityPrice: 0.19, // €/kWh (corrigé de 0.25 à 0.19)
+  defaultElectricityPrice: 0.1952, // €/kWh (prix par défaut si pas de consommation renseignée)
   sellingPrice: 0.4, // €/kWh rachat EDF OA
 };
 
@@ -165,22 +165,32 @@ export const calculateSolarPotential = async (
   const tempPvgisData = await getPVGISData(addressInfo.latitude, addressInfo.longitude, 1);
   const specificProduction = tempPvgisData.specificProduction;
   
+  // Calcul du prix personnalisé de l'électricité
+  const electricityPrice = calculatePersonalizedElectricityPrice(
+    consumptionInfo.annualConsumption,
+    consumptionInfo.monthlyBill
+  );
+  
   // Calcul de la puissance optimale qui garantit des économies (limitée entre MIN_POWER et MAX_POWER)
   const maxPower = calculateOptimalPowerForProfit(
     consumptionInfo.annualConsumption,
     consumptionInfo.heatingType,
     specificProduction,
-    maxPowerFromSurface
+    maxPowerFromSurface,
+    electricityPrice
   );
 
   // Récupération des données PVGIS réelles
   const pvgisData = await getPVGISData(addressInfo.latitude, addressInfo.longitude, maxPower);
   const annualProduction = pvgisData.annualProduction;
   
+  // Utiliser la consommation effective pour les calculs (4000 kWh par défaut si non renseignée)
+  const effectiveConsumption = consumptionInfo.annualConsumption > 0 ? consumptionInfo.annualConsumption : 4000;
+  
   // Calcul de l'autoconsommation dynamique
   const selfConsumption = calculateSelfConsumption(
     annualProduction,
-    consumptionInfo.annualConsumption,
+    effectiveConsumption,
     consumptionInfo.heatingType,
     TARGET_MIN_SELF_CONSUMPTION
   );
@@ -191,7 +201,7 @@ export const calculateSolarPotential = async (
   
   // Calcul des économies complètes :
   // 1. Économies sur la facture (électricité non achetée grâce à l'autoconsommation)
-  const billSavings = selfConsumedEnergy * SUBSCRIPTION_CONFIG.electricityPrice;
+  const billSavings = selfConsumedEnergy * electricityPrice;
   
   // 2. Revenus de la revente du surplus
   const saleRevenue = soldEnergy * SUBSCRIPTION_CONFIG.sellingPrice;

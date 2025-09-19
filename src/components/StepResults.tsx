@@ -138,7 +138,7 @@ export const StepResults: React.FC<StepResultsProps> = ({ results, onNext, onPre
             className="bg-white text-primary-600 px-10 py-4 rounded-xl font-bold font-display text-lg hover:bg-gray-50 transition-all duration-300 flex items-center justify-center shadow-medium"
           >
             <Mail className="w-6 h-6 mr-3" />
-            Souscrire à l'abonnement solaire
+            Être contacté
           </button>
         </div>
       </div>
