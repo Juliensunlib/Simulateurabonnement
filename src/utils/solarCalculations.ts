@@ -14,6 +14,35 @@ const MAX_POWER = 12;   // kWc maximum
 // Taux d'autoconsommation maximum fixé à 60%
 const TARGET_MIN_SELF_CONSUMPTION = 60; // Minimum garanti, mais peut être plus élevé
 
+/**
+ * Calcule le prix personnalisé de l'électricité basé sur la consommation et la facture
+ */
+const calculatePersonalizedElectricityPrice = (
+  annualConsumption: number,
+  monthlyBill: number
+): number => {
+  // Si pas de consommation renseignée, utiliser le prix par défaut
+  if (!annualConsumption || annualConsumption <= 0) {
+    return SUBSCRIPTION_CONFIG.defaultElectricityPrice;
+  }
+  
+  // Si pas de facture mensuelle renseignée, utiliser le prix par défaut
+  if (!monthlyBill || monthlyBill <= 0) {
+    return SUBSCRIPTION_CONFIG.defaultElectricityPrice;
+  }
+  
+  // Calcul du prix personnalisé : facture mensuelle / (consommation annuelle / 12)
+  const monthlyConsumption = annualConsumption / 12;
+  const personalizedPrice = monthlyBill / monthlyConsumption;
+  
+  // Vérification de cohérence : prix entre 0,10 € et 0,50 €/kWh
+  if (personalizedPrice < 0.10 || personalizedPrice > 0.50) {
+    return SUBSCRIPTION_CONFIG.defaultElectricityPrice;
+  }
+  
+  return personalizedPrice;
+};
+
 // Grille tarifaire SunLib (EUR TTC mensuel) pour 25 ans selon la puissance
 // Puissances: 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, etc.
 const SUNLIB_TARIFS = {
