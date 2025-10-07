@@ -10,15 +10,23 @@ const AIRTABLE_TABLE_NAME = 'Leads Solaires';
 let base: any = null;
 
 const initializeAirtable = () => {
+  console.log('🔍 Debug Airtable Config:', {
+    hasApiKey: !!AIRTABLE_API_KEY,
+    apiKeyPreview: AIRTABLE_API_KEY ? `${AIRTABLE_API_KEY.substring(0, 10)}...` : 'undefined',
+    hasBaseId: !!AIRTABLE_BASE_ID,
+    baseId: AIRTABLE_BASE_ID || 'undefined',
+    tableName: AIRTABLE_TABLE_NAME
+  });
+
   if (!AIRTABLE_API_KEY || !AIRTABLE_BASE_ID) {
     console.warn('Configuration Airtable manquante. Les données ne seront pas envoyées vers Airtable.');
     return null;
   }
-  
+
   if (!base) {
     base = new Airtable({ apiKey: AIRTABLE_API_KEY }).base(AIRTABLE_BASE_ID);
   }
-  
+
   return base;
 };
 
