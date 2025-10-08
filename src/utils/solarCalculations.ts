@@ -4,7 +4,20 @@ import { getPVGISData, calculateSelfConsumption } from '../services/geoService';
 // Configuration des tarifs et paramètres
 const SUBSCRIPTION_CONFIG = {
   defaultElectricityPrice: 0.1952, // €/kWh (prix par défaut si pas de consommation renseignée)
-  sellingPrice: 0.4, // €/kWh rachat EDF OA
+};
+
+/**
+ * Calcule le prix de rachat de l'électricité selon la puissance installée
+ * < 9 kWc : 0,04 €/kWh
+ * ≥ 9 kWc et ≤ 100 kWc : 0,0617 €/kWh
+ */
+const getSellingPrice = (power: number): number => {
+  if (power < 9) {
+    return 0.04;
+  } else if (power <= 100) {
+    return 0.0617;
+  }
+  return 0.0617; // Pour les puissances > 100 kWc (cas rare)
 };
 
 // Contraintes de puissance
@@ -119,36 +132,40 @@ const calculateOptimalPowerForProfit = (
   annualConsumption: number,
   heatingType: string,
   specificProduction: number,
-  maxPowerFromSurface: number
+  maxPowerFromSurface: number,
+  electricityPrice: number
 ): number => {
   let optimalPower = 0;
   let maxMonthlyProfit = 0;
-  
+
   // Calcul de la puissance maximale pour ne pas dépasser 130% de la consommation annuelle
   const maxProductionAllowed = annualConsumption * 1.5; // 150% de la consommation
   const maxPowerFromConsumption = maxProductionAllowed / specificProduction;
-  
+
   // Limiter la puissance maximale testée par toutes les contraintes
   const maxTestPower = Math.min(maxPowerFromSurface, MAX_POWER, maxPowerFromConsumption);
-  
+
   // Tester de MIN_POWER (2.5 kWc) jusqu'à la puissance max limitée par pas de 0.5 kWc
   for (let power = MIN_POWER; power <= maxTestPower; power += 0.5) {
     const annualProduction = power * specificProduction;
-    
+
     // Calcul autoconsommation dynamique selon la production et la consommation
     const selfConsumption = calculateSelfConsumption(
-      annualProduction, 
-      annualConsumption, 
-      heatingType, 
+      annualProduction,
+      annualConsumption,
+      heatingType,
       TARGET_MIN_SELF_CONSUMPTION
     );
-    
+
     const selfConsumedEnergy = (annualProduction * selfConsumption) / 100;
     const soldEnergy = annualProduction - selfConsumedEnergy;
-    
+
+    // Prix de rachat selon la puissance
+    const sellingPrice = getSellingPrice(power);
+
     // Économies annuelles
-    const annualSavings = (selfConsumedEnergy * SUBSCRIPTION_CONFIG.electricityPrice) + 
-                         (soldEnergy * SUBSCRIPTION_CONFIG.sellingPrice);
+    const annualSavings = (selfConsumedEnergy * electricityPrice) +
+                         (soldEnergy * sellingPrice);
     
     // Abonnement SunLib mensuel
     const monthlySubscription = getSunLibSubscription(power);
@@ -227,13 +244,16 @@ export const calculateSolarPotential = async (
   // Calcul des économies
   const selfConsumedEnergy = (annualProduction * selfConsumption) / 100;
   const soldEnergy = annualProduction - selfConsumedEnergy;
-  
+
+  // Prix de rachat selon la puissance installée
+  const sellingPrice = getSellingPrice(maxPower);
+
   // Calcul des économies complètes :
   // 1. Économies sur la facture (électricité non achetée grâce à l'autoconsommation)
   const billSavings = selfConsumedEnergy * electricityPrice;
-  
+
   // 2. Revenus de la revente du surplus
-  const saleRevenue = soldEnergy * SUBSCRIPTION_CONFIG.sellingPrice;
+  const saleRevenue = soldEnergy * sellingPrice;
   
   // 3. Total des économies annuelles
   const annualSavings = Math.round(billSavings + saleRevenue);
