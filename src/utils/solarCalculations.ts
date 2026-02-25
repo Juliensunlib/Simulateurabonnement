@@ -22,7 +22,7 @@ const getSellingPrice = (power: number): number => {
 
 // Contraintes de puissance
 const MIN_POWER = 2.5; // kWc minimum
-const MAX_POWER = 12;   // kWc maximum
+const MAX_POWER = 36;   // kWc maximum (pour les grosses consommations)
 
 // Taux d'autoconsommation maximum fixé à 60%
 const TARGET_MIN_SELF_CONSUMPTION = 60; // Minimum garanti, mais peut être plus élevé
@@ -91,6 +91,18 @@ const SUNLIB_TARIFS = {
   8.0: 149.0,
   8.5: 158.0,
   9.0: 167.0,
+  9.5: 176.0,
+  10.0: 185.0,
+  10.5: 194.0,
+  11.0: 203.0,
+  11.5: 212.0,
+  12.0: 221.0,
+  15.0: 275.0,
+  18.0: 329.0,
+  20.0: 365.0,
+  25.0: 455.0,
+  30.0: 545.0,
+  36.0: 654.0,
   // Pour les puissances supérieures, extrapolation linéaire
 };
 
@@ -111,13 +123,12 @@ const getSunLibSubscription = (power: number): number => {
     return SUNLIB_TARIFS[2.5];
   }
   
-  // Pour les puissances supérieures à 9 kWc, extrapolation linéaire
-  if (roundedPower > 9) {
-    // Progression moyenne entre 8.5 et 9 kWc = 9€
-    const progressionMoyenne = SUNLIB_TARIFS[9.0] - SUNLIB_TARIFS[8.5]; // 167 - 158 = 9€
-    const ecartPuissance = roundedPower - 9;
-    const nbPas = ecartPuissance / 0.5;
-    return SUNLIB_TARIFS[9.0] + (nbPas * progressionMoyenne);
+  // Pour les puissances supérieures à 36 kWc, extrapolation linéaire
+  if (roundedPower > 36) {
+    // Progression moyenne : ~18€ par kWc supplémentaire
+    const progressionMoyenne = 18;
+    const ecartPuissance = roundedPower - 36;
+    return SUNLIB_TARIFS[36.0] + (ecartPuissance * progressionMoyenne);
   }
   
   // Interpolation entre deux valeurs connues
@@ -156,8 +167,10 @@ const calculateOptimalPowerForProfit = (
   let optimalPower = 0;
   let maxMonthlyProfit = 0;
 
-  // Calcul de la puissance maximale pour ne pas dépasser 130% de la consommation annuelle
-  const maxProductionAllowed = annualConsumption * 1.5; // 150% de la consommation
+  // Pour les grosses consommations (> 15000 kWh/an), permettre jusqu'à 120% de la consommation
+  // Pour les petites consommations, limiter à 150%
+  const maxProductionRatio = annualConsumption > 15000 ? 1.2 : 1.5;
+  const maxProductionAllowed = annualConsumption * maxProductionRatio;
   const maxPowerFromConsumption = maxProductionAllowed / specificProduction;
 
   // Limiter la puissance maximale testée par toutes les contraintes
