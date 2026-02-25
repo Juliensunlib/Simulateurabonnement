@@ -95,18 +95,19 @@ export const sendLeadToAirtable = async (leadData: LeadData): Promise<string> =>
       'Téléphone': formatPhoneForAirtable(leadData.contactInfo.phone),
       'Code postal': leadData.contactInfo.postalCode || leadData.addressInfo.postalCode,
       'Préférence contact': leadData.contactInfo.contactPreference === 'email' ? 'Email' : 'Téléphone',
-      
+      'Consentement RGPD': leadData.contactInfo.rgpdConsent,
+
       // Informations adresse
       'Adresse complète': leadData.addressInfo.fullAddress || leadData.addressInfo.address,
       'Ville': leadData.addressInfo.city,
-      
+
       // Informations consommation
       'Consommation annuelle': leadData.consumptionInfo.annualConsumption,
       'Facture mensuelle': leadData.consumptionInfo.monthlyBill,
-      
+
       // Résultats simulation
       'Puissance recommandée': leadData.simulationResult.maxPower,
-      
+
       // Métadonnées
       'Date création': new Date().toISOString().split('T')[0],
       'Statut': 'Nouveau'

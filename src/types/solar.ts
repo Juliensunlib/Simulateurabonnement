@@ -45,6 +45,7 @@ export interface ContactInfo {
   phone: string;
   postalCode?: string;
   contactPreference: 'email' | 'phone';
+  rgpdConsent: boolean;
 }
 
 export interface SimulationResult {

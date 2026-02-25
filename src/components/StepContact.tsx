@@ -28,8 +28,8 @@ export const StepContact: React.FC<StepContactProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (data.firstName && data.lastName && data.email && data.phone) {
+
+    if (data.firstName && data.lastName && data.email && data.phone && data.rgpdConsent) {
       setIsSubmitting(true);
       setSubmitError(null);
       
@@ -183,6 +183,21 @@ export const StepContact: React.FC<StepContactProps> = ({
           </div>
         </div>
 
+        <div>
+          <label className="flex items-start space-x-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={data.rgpdConsent}
+              onChange={(e) => onChange({ ...data, rgpdConsent: e.target.checked })}
+              className="mt-1 w-5 h-5 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+              required
+            />
+            <span className="text-sm text-gray-700">
+              J'accepte d'être contacté par les experts solaires de SunLib et que mes données soient traitées conformément à la politique de confidentialité. *
+            </span>
+          </label>
+        </div>
+
         {submitError && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-4">
             <p className="text-red-800 text-sm">{submitError}</p>
@@ -199,7 +214,7 @@ export const StepContact: React.FC<StepContactProps> = ({
           </button>
           <button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting || !data.rgpdConsent}
             className="flex-1 bg-gradient-to-r from-purple-600 to-purple-700 text-white py-3 px-6 rounded-lg hover:from-purple-700 hover:to-purple-800 transition-all duration-200 font-medium flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSubmitting ? (
@@ -216,10 +231,6 @@ export const StepContact: React.FC<StepContactProps> = ({
           </button>
         </div>
       </form>
-
-      <div className="mt-6 text-center text-sm text-gray-500">
-        <p>En soumettant ce formulaire, vous acceptez d'être contacté par nos experts solaires et que vos données soient traitées.</p>
-      </div>
     </div>
   );
 };

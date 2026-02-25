@@ -35,7 +35,8 @@ function App() {
     email: '',
     phone: '',
     postalCode: '',
-    contactPreference: 'email'
+    contactPreference: 'email',
+    rgpdConsent: false
   });
   const [simulationResult, setSimulationResult] = useState<SimulationResult | null>(null);
 
@@ -71,7 +72,7 @@ function App() {
     setAddressInfo({ address: '', city: '', postalCode: '' });
     setRoofInfo({ surface: 0, orientation: 'sud', inclination: 30, roofType: 'tuiles', obstacles: false });
     setConsumptionInfo({ annualConsumption: 0, monthlyBill: 0, heatingType: 'electrique' });
-    setContactInfo({ firstName: '', lastName: '', email: '', phone: '', postalCode: '', contactPreference: 'email' });
+    setContactInfo({ firstName: '', lastName: '', email: '', phone: '', postalCode: '', contactPreference: 'email', rgpdConsent: false });
     setSimulationResult(null);
   };
 
