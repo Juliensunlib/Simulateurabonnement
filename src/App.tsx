@@ -42,19 +42,17 @@ function App() {
   const totalSteps = 6;
 
   const nextStep = () => {
-    if (currentStep === 3) {
-      // Calculer les résultats avant d'afficher l'étape 4
+    if (currentStep === 4) {
+      // Calculer les résultats après avoir rempli le formulaire de contact
       calculateSolarPotential(addressInfo, roofInfo, consumptionInfo)
         .then(results => {
           setSimulationResult(results);
         })
         .catch(error => {
           console.error('Erreur lors du calcul:', error);
-          // Gérer l'erreur ou afficher un message à l'utilisateur
         });
     }
     setCurrentStep(prev => Math.min(prev + 1, totalSteps));
-    // Faire défiler vers le haut de la page
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -65,9 +63,7 @@ function App() {
   };
 
   const completeSimulation = () => {
-    setCurrentStep(6);
-    // Faire défiler vers le haut de la page
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    nextStep();
   };
 
   const restartSimulation = () => {
@@ -109,14 +105,6 @@ function App() {
           />
         );
       case 4:
-        return simulationResult ? (
-          <StepResults
-            results={simulationResult}
-            onNext={nextStep}
-            onPrev={prevStep}
-          />
-        ) : null;
-      case 5:
         return (
           <StepContact
             data={contactInfo}
@@ -131,6 +119,14 @@ function App() {
             }}
           />
         );
+      case 5:
+        return simulationResult ? (
+          <StepResults
+            results={simulationResult}
+            onNext={nextStep}
+            onPrev={prevStep}
+          />
+        ) : null;
       case 6:
         return <StepComplete onRestart={restartSimulation} />;
       default:
@@ -145,9 +141,9 @@ function App() {
         <div className="max-w-6xl mx-auto px-4 py-4">
           <div className="flex items-center justify-center space-x-4">
             <div className="flex items-center space-x-3">
-              <img 
-                src="/03 - Copie.png" 
-                alt="Logo SunLib" 
+              <img
+                src="/logo.png"
+                alt="Logo SunLib"
                 className="w-12 h-12 rounded-xl shadow-medium object-contain"
               />
               <div className="text-left">
