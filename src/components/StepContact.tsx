@@ -210,7 +210,7 @@ export const StepContact: React.FC<StepContactProps> = ({
             ) : (
               <>
                 <CheckCircle className="w-5 h-5 mr-2" />
-                Envoyer ma demande
+                Envoyer ma demande et voir mes économies
               </>
             )}
           </button>
