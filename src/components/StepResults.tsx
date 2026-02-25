@@ -135,18 +135,6 @@ export const StepResults: React.FC<StepResultsProps> = ({ results, onNext, onPre
       </div>
 
       <div className="max-w-2xl mx-auto text-center mb-10">
-        <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-          <CheckCircle className="w-12 h-12 text-green-600" />
-        </div>
-
-        <h2 className="text-3xl font-bold text-gray-900 mb-4">🎉 Demande envoyée avec succès !</h2>
-
-        <div className="bg-green-50 border border-green-200 rounded-lg p-6 mb-8">
-          <p className="text-lg text-gray-700 mb-4">
-            Merci pour votre confiance ! Votre simulation solaire a été transmise à nos experts.
-          </p>
-        </div>
-
         <div className="grid md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white p-6 rounded-lg shadow-md">
             <Download className="w-8 h-8 text-blue-600 mx-auto mb-3" />

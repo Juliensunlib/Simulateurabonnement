@@ -142,7 +142,7 @@ function App() {
           <div className="flex items-center justify-center space-x-4">
             <div className="flex items-center space-x-3">
               <img
-                src="/logo.png"
+                src="/logo.svg"
                 alt="Logo SunLib"
                 className="w-12 h-12 rounded-xl shadow-medium object-contain"
               />
