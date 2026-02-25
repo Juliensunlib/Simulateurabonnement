@@ -51,7 +51,7 @@ export const StepResults: React.FC<StepResultsProps> = ({ results, onNext, onPre
 
       <div className="grid md:grid-cols-2 gap-10 mb-12">
         <div className="bg-white p-8 rounded-2xl shadow-strong border border-gray-100">
-          <h3 className="text-2xl font-bold font-display text-gray-900 mb-6">💰 Vos économies mensuelles estimées</h3>
+          <h3 className="text-2xl font-bold font-display text-gray-900 mb-6">💰 Vos économies annuelles estimées</h3>
           <div className="space-y-5">
             <div className="bg-blue-50 p-4 rounded-lg mb-4">
               <h4 className="font-semibold text-blue-900 mb-3">📊 Détail de vos économies annuelles :</h4>
@@ -66,7 +66,7 @@ export const StepResults: React.FC<StepResultsProps> = ({ results, onNext, onPre
                 </div>
                 <div className="flex justify-between pt-2 border-t border-blue-200">
                   <span className="font-semibold text-blue-900">Total économies annuelles :</span>
-                  <span className="font-bold text-green-600">+{results.annualSavings}€</span>
+                  <span className="font-bold text-green-600">+{results.annualSavings}€/an</span>
                 </div>
               </div>
             </div>
@@ -75,16 +75,16 @@ export const StepResults: React.FC<StepResultsProps> = ({ results, onNext, onPre
               <span className="font-bold text-lg">{results.selfConsumption}%</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-700 font-medium">Économies mensuelles</span>
-              <span className="font-bold text-lg text-primary-600">{Math.round(results.annualSavings / 12)}€/mois</span>
+              <span className="text-gray-700 font-medium">Économies annuelles</span>
+              <span className="font-bold text-lg text-primary-600">{results.annualSavings}€/an</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-700 font-medium">Abonnement mensuel</span>
-              <span className="font-bold text-lg text-accent-600">{results.monthlySubscription}€/mois</span>
+              <span className="text-gray-700 font-medium">Abonnement annuel</span>
+              <span className="font-bold text-lg text-accent-600">{results.monthlySubscription * 12}€/an</span>
             </div>
             <div className="flex justify-between pt-4 border-t-2 border-gray-100">
-              <span className="text-gray-900 font-semibold">Gain net mensuel</span>
-              <span className="font-bold text-xl text-green-600">+{Math.round((results.annualSavings - (results.monthlySubscription * 12)) / 12)}€/mois</span>
+              <span className="text-gray-900 font-semibold">Gain net annuel</span>
+              <span className="font-bold text-xl text-green-600">+{results.annualSavings - (results.monthlySubscription * 12)}€/an</span>
             </div>
           </div>
         </div>
@@ -117,19 +117,19 @@ export const StepResults: React.FC<StepResultsProps> = ({ results, onNext, onPre
       </div>
 
       <div className="bg-gradient-to-r from-green-600 to-green-700 text-white p-10 rounded-2xl text-center mb-10 shadow-strong">
-        <h3 className="text-3xl font-bold font-display mb-6">🎉 Économies estimées dès le premier mois !</h3>
+        <h3 className="text-3xl font-bold font-display mb-6">🎉 Économies estimées dès la première année !</h3>
         <div className="grid md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white bg-opacity-20 rounded-xl p-6">
             <div className="text-3xl font-bold mb-2">{results.maxPower} kWc</div>
             <div className="text-lg opacity-90">Puissance optimisée</div>
           </div>
           <div className="bg-white bg-opacity-20 rounded-xl p-6">
-            <div className="text-3xl font-bold mb-2">{results.monthlySubscription}€</div>
-            <div className="text-lg opacity-90">Abonnement mensuel</div>
+            <div className="text-3xl font-bold mb-2">{results.monthlySubscription * 12}€</div>
+            <div className="text-lg opacity-90">Abonnement annuel</div>
           </div>
           <div className="bg-white bg-opacity-20 rounded-xl p-6">
-            <div className="text-3xl font-bold mb-2">+{Math.round((results.annualSavings - (results.monthlySubscription * 12)) / 12)}€</div>
-            <div className="text-lg opacity-90">Gain net mensuel</div>
+            <div className="text-3xl font-bold mb-2">+{results.annualSavings - (results.monthlySubscription * 12)}€</div>
+            <div className="text-lg opacity-90">Gain net annuel</div>
           </div>
         </div>
       </div>
