@@ -36,6 +36,10 @@ export const StepContact: React.FC<StepContactProps> = ({
       try {
         // Envoyer les données vers Airtable si toutes les données sont disponibles
         if (leadData) {
+          console.log('📤 Préparation envoi vers Airtable...');
+          console.log('leadData:', leadData);
+          console.log('contactInfo:', data);
+
           const completeLeadData: LeadData = {
             addressInfo: leadData.addressInfo,
             roofInfo: leadData.roofInfo,
@@ -43,23 +47,30 @@ export const StepContact: React.FC<StepContactProps> = ({
             contactInfo: data,
             simulationResult: leadData.simulationResult
           };
-          
+
+          console.log('completeLeadData:', completeLeadData);
+
           const result = await sendLeadToAirtable(completeLeadData);
-          if (result === 'no-airtable-config' || 
-              result === 'invalid-api-key' || 
+          console.log('Résultat envoi Airtable:', result);
+
+          if (result === 'no-airtable-config' ||
+              result === 'invalid-api-key' ||
               result === 'invalid-base-id' ||
               result === 'authorization-error' ||
               result === 'generic-error') {
-            console.log('Simulation terminée (Airtable non configuré)');
+            console.log('⚠️ Simulation terminée (Airtable non configuré ou erreur)');
           } else {
-            console.log('Données envoyées vers Airtable avec succès');
+            console.log('✅ Données envoyées vers Airtable avec succès, ID:', result);
           }
+        } else {
+          console.log('⚠️ leadData est undefined, impossible d\'envoyer vers Airtable');
         }
-        
+
         onComplete();
       } catch (error) {
         // En cas d'erreur inattendue, continuer quand même
-        console.log('Erreur inattendue, mais simulation terminée');
+        console.error('❌ Erreur inattendue:', error);
+        console.log('Simulation terminée malgré l\'erreur');
         onComplete();
       } finally {
         setIsSubmitting(false);

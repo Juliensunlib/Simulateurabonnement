@@ -147,6 +147,12 @@ function App() {
                 alt="Logo SunLib"
                 className="h-14 object-contain"
               />
+              <div className="text-left">
+                <h1 className="text-3xl font-bold font-display bg-gradient-to-r from-primary-600 to-primary-700 bg-clip-text text-transparent">
+                  Simulateur d'abonnement solaire SunLib
+                </h1>
+                <p className="text-base text-gray-600 font-medium">Calculez le potentiel de votre toiture</p>
+              </div>
             </div>
           </div>
         </div>
