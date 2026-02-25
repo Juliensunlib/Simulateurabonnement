@@ -36,7 +36,8 @@ function App() {
     phone: '',
     postalCode: '',
     contactPreference: 'email',
-    rgpdConsent: false
+    rgpdConsent: false,
+    clientType: 'particulier'
   });
   const [simulationResult, setSimulationResult] = useState<SimulationResult | null>(null);
 

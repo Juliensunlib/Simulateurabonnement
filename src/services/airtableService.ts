@@ -96,6 +96,7 @@ export const sendLeadToAirtable = async (leadData: LeadData): Promise<string> =>
       'Code postal': leadData.contactInfo.postalCode || leadData.addressInfo.postalCode,
       'Préférence contact': leadData.contactInfo.contactPreference === 'email' ? 'Email' : 'Téléphone',
       'Consentement RGPD': leadData.contactInfo.rgpdConsent,
+      'Type de client': leadData.contactInfo.clientType === 'particulier' ? 'Particulier' : 'Entreprise',
 
       // Informations adresse
       'Adresse complète': leadData.addressInfo.fullAddress || leadData.addressInfo.address,

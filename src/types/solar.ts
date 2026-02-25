@@ -46,6 +46,7 @@ export interface ContactInfo {
   postalCode?: string;
   contactPreference: 'email' | 'phone';
   rgpdConsent: boolean;
+  clientType: 'particulier' | 'entreprise';
 }
 
 export interface SimulationResult {

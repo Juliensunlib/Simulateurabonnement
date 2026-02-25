@@ -122,6 +122,40 @@ export const StepContact: React.FC<StepContactProps> = ({
         </div>
 
         <div>
+          <label className="block text-sm font-medium text-gray-700 mb-3">
+            Type de client *
+          </label>
+          <div className="grid grid-cols-2 gap-4">
+            <label className={`cursor-pointer border-2 rounded-lg p-4 block transition-all hover:border-purple-300 ${
+              data.clientType === 'particulier' ? 'border-purple-500 bg-purple-50' : 'border-gray-200'
+            }`}>
+              <input
+                type="radio"
+                name="clientType"
+                value="particulier"
+                checked={data.clientType === 'particulier'}
+                onChange={(e) => onChange({ ...data, clientType: e.target.value as any })}
+                className="sr-only"
+              />
+              <div className="font-medium text-gray-900 text-center">Particulier</div>
+            </label>
+            <label className={`cursor-pointer border-2 rounded-lg p-4 block transition-all hover:border-purple-300 ${
+              data.clientType === 'entreprise' ? 'border-purple-500 bg-purple-50' : 'border-gray-200'
+            }`}>
+              <input
+                type="radio"
+                name="clientType"
+                value="entreprise"
+                checked={data.clientType === 'entreprise'}
+                onChange={(e) => onChange({ ...data, clientType: e.target.value as any })}
+                className="sr-only"
+              />
+              <div className="font-medium text-gray-900 text-center">Entreprise</div>
+            </label>
+          </div>
+        </div>
+
+        <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Email *
           </label>
