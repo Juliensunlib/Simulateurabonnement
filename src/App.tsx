@@ -40,7 +40,7 @@ function App() {
   });
   const [simulationResult, setSimulationResult] = useState<SimulationResult | null>(null);
 
-  const totalSteps = 6;
+  const totalSteps = 5;
 
   const nextStep = () => {
     if (currentStep === 4) {
@@ -126,10 +126,9 @@ function App() {
             results={simulationResult}
             onNext={nextStep}
             onPrev={prevStep}
+            onRestart={restartSimulation}
           />
         ) : null;
-      case 6:
-        return <StepComplete onRestart={restartSimulation} />;
       default:
         return null;
     }
@@ -160,8 +159,8 @@ function App() {
 
       {/* Main Content */}
       <main className="max-w-6xl mx-auto px-4 py-8">
-        {currentStep < 6 && (
-          <ProgressBar currentStep={currentStep} totalSteps={5} />
+        {currentStep < 5 && (
+          <ProgressBar currentStep={currentStep} totalSteps={4} />
         )}
         
         <div className="bg-white rounded-3xl shadow-strong p-10 min-h-[600px] border border-gray-100">
