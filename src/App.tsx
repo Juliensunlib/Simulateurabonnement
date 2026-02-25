@@ -73,7 +73,7 @@ function App() {
     setAddressInfo({ address: '', city: '', postalCode: '' });
     setRoofInfo({ surface: 0, orientation: 'sud', inclination: 30, roofType: 'tuiles', obstacles: false });
     setConsumptionInfo({ annualConsumption: 0, monthlyBill: 0, heatingType: 'electrique' });
-    setContactInfo({ firstName: '', lastName: '', email: '', phone: '', postalCode: '', contactPreference: 'email', rgpdConsent: false });
+    setContactInfo({ firstName: '', lastName: '', email: '', phone: '', postalCode: '', contactPreference: 'email', rgpdConsent: false, clientType: 'particulier' });
     setSimulationResult(null);
   };
 
@@ -143,16 +143,10 @@ function App() {
           <div className="flex items-center justify-center space-x-4">
             <div className="flex items-center space-x-3">
               <img
-                src="/logo.svg"
+                src="/01.jpg"
                 alt="Logo SunLib"
-                className="w-12 h-12 rounded-xl shadow-medium object-contain"
+                className="h-14 object-contain"
               />
-              <div className="text-left">
-                <h1 className="text-3xl font-bold font-display bg-gradient-to-r from-primary-600 to-primary-700 bg-clip-text text-transparent">
-                  Simulateur d'abonnement solaire SunLib
-                </h1>
-                <p className="text-base text-gray-600 font-medium">Calculez le potentiel de votre toiture</p>
-              </div>
             </div>
           </div>
         </div>
