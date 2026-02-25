@@ -29,31 +29,49 @@ const TARGET_MIN_SELF_CONSUMPTION = 60; // Minimum garanti, mais peut être plus
 
 /**
  * Calcule le prix personnalisé de l'électricité basé sur la consommation et la facture
+ * Retourne aussi une estimation de la consommation si non renseignée
  */
 const calculatePersonalizedElectricityPrice = (
   annualConsumption: number,
   monthlyBill: number
-): number => {
-  // Si pas de consommation renseignée, utiliser le prix par défaut
-  if (!annualConsumption || annualConsumption <= 0) {
-    return SUBSCRIPTION_CONFIG.defaultElectricityPrice;
-  }
-  
-  // Si pas de facture mensuelle renseignée, utiliser le prix par défaut
+): { price: number; estimatedConsumption: number } => {
+  // Si pas de facture mensuelle renseignée, utiliser les valeurs par défaut
   if (!monthlyBill || monthlyBill <= 0) {
-    return SUBSCRIPTION_CONFIG.defaultElectricityPrice;
+    return {
+      price: SUBSCRIPTION_CONFIG.defaultElectricityPrice,
+      estimatedConsumption: annualConsumption > 0 ? annualConsumption : 4000
+    };
   }
-  
-  // Calcul du prix personnalisé : facture mensuelle / (consommation annuelle / 12)
-  const monthlyConsumption = annualConsumption / 12;
-  const personalizedPrice = monthlyBill / monthlyConsumption;
-  
-  // Vérification de cohérence : prix entre 0,10 € et 0,50 €/kWh
-  if (personalizedPrice < 0.10 || personalizedPrice > 0.50) {
-    return SUBSCRIPTION_CONFIG.defaultElectricityPrice;
+
+  // Si consommation renseignée, calculer le prix réel
+  if (annualConsumption && annualConsumption > 0) {
+    const monthlyConsumption = annualConsumption / 12;
+    const personalizedPrice = monthlyBill / monthlyConsumption;
+
+    // Vérification de cohérence : prix entre 0,10 € et 0,50 €/kWh
+    if (personalizedPrice >= 0.10 && personalizedPrice <= 0.50) {
+      return {
+        price: personalizedPrice,
+        estimatedConsumption: annualConsumption
+      };
+    }
+
+    // Prix incohérent, utiliser le défaut mais garder la consommation
+    return {
+      price: SUBSCRIPTION_CONFIG.defaultElectricityPrice,
+      estimatedConsumption: annualConsumption
+    };
   }
-  
-  return personalizedPrice;
+
+  // Si pas de consommation renseignée, l'estimer à partir de la facture
+  // Facture annuelle / prix moyen de l'électricité
+  const annualBill = monthlyBill * 12;
+  const estimatedConsumption = Math.round(annualBill / SUBSCRIPTION_CONFIG.defaultElectricityPrice);
+
+  return {
+    price: SUBSCRIPTION_CONFIG.defaultElectricityPrice,
+    estimatedConsumption: estimatedConsumption
+  };
 };
 
 // Grille tarifaire SunLib (EUR TTC mensuel) pour 25 ans selon la puissance
@@ -211,15 +229,16 @@ export const calculateSolarPotential = async (
   const tempPvgisData = await getPVGISData(addressInfo.latitude, addressInfo.longitude, 1);
   const specificProduction = tempPvgisData.specificProduction;
   
-  // Calcul du prix personnalisé de l'électricité
-  const electricityPrice = calculatePersonalizedElectricityPrice(
+  // Calcul du prix personnalisé de l'électricité et estimation de la consommation
+  const { price: electricityPrice, estimatedConsumption } = calculatePersonalizedElectricityPrice(
     consumptionInfo.annualConsumption,
     consumptionInfo.monthlyBill
   );
   
   // Calcul de la puissance optimale qui garantit des économies (limitée entre MIN_POWER et MAX_POWER)
+  // Utiliser la consommation estimée si la consommation n'est pas renseignée
   const maxPower = calculateOptimalPowerForProfit(
-    consumptionInfo.annualConsumption,
+    estimatedConsumption,
     consumptionInfo.heatingType,
     specificProduction,
     maxPowerFromSurface,
@@ -229,9 +248,9 @@ export const calculateSolarPotential = async (
   // Récupération des données PVGIS réelles
   const pvgisData = await getPVGISData(addressInfo.latitude, addressInfo.longitude, maxPower);
   const annualProduction = pvgisData.annualProduction;
-  
-  // Utiliser la consommation effective pour les calculs (4000 kWh par défaut si non renseignée)
-  const effectiveConsumption = consumptionInfo.annualConsumption > 0 ? consumptionInfo.annualConsumption : 4000;
+
+  // Utiliser la consommation estimée pour tous les calculs
+  const effectiveConsumption = estimatedConsumption;
   
   // Calcul de l'autoconsommation dynamique
   const selfConsumption = calculateSelfConsumption(
