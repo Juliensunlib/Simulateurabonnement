@@ -44,18 +44,23 @@ function App() {
   const totalSteps = 5;
 
   const nextStep = () => {
-    if (currentStep === 4) {
-      // Calculer les résultats après avoir rempli le formulaire de contact
+    if (currentStep === 3) {
+      // Calculer les résultats AVANT d'arriver à l'étape Contact
       calculateSolarPotential(addressInfo, roofInfo, consumptionInfo)
         .then(results => {
           setSimulationResult(results);
+          setCurrentStep(prev => Math.min(prev + 1, totalSteps));
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         })
         .catch(error => {
           console.error('Erreur lors du calcul:', error);
+          setCurrentStep(prev => Math.min(prev + 1, totalSteps));
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         });
+    } else {
+      setCurrentStep(prev => Math.min(prev + 1, totalSteps));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-    setCurrentStep(prev => Math.min(prev + 1, totalSteps));
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const prevStep = () => {
@@ -107,7 +112,7 @@ function App() {
           />
         );
       case 4:
-        return (
+        return simulationResult ? (
           <StepContact
             data={contactInfo}
             onChange={setContactInfo}
@@ -120,6 +125,10 @@ function App() {
               simulationResult
             }}
           />
+        ) : (
+          <div className="flex justify-center items-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+          </div>
         );
       case 5:
         return simulationResult ? (
